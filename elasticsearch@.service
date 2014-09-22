@@ -35,8 +35,6 @@ TimeoutStopSec=15
 
 Restart=on-failure
 RestartSec=10s
-StartLimitInterval=600
-StartLimitBurst=5
 
 EnvironmentFile=/run/docker.env
 
