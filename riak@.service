@@ -35,10 +35,9 @@ TimeoutStopSec=15
 
 Restart=on-failure
 RestartSec=10s
-StartLimitInterval=600
-StartLimitBurst=5
 
 EnvironmentFile=/run/docker.env
+EnvironmentFile=/etc/skydns.env
 
 LimitNOFILE=65536
 
@@ -51,7 +50,7 @@ ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/opt/bin/systemd-docker run --name %p \
 -v /var/lib/riak:/var/lib/riak \
 -v /var/log/riak:/var/log/riak \
--h %p.%H \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 quay.io/joukou/riak
 
 ExecStop=/usr/bin/docker kill %p
