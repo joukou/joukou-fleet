@@ -45,7 +45,7 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 
 ExecStart=/opt/bin/systemd-docker run --name %p \
--e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001 \
+-e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001" \
 -e "SKYDNS_CONTAINER=influxdb" \
 -e "SKYDNS_INSTANCE=%i" \
 -e "SKYDNS_PORT=8086" \
