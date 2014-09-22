@@ -33,6 +33,9 @@ TimeoutStopSec=15
 Restart=on-failure
 RestartSec=10s
 
+EnvironmentFile=/run/docker.env
+EnvironmentFile=/etc/skydns.env
+
 ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
 ExecStartPre=/usr/bin/docker pull quay.io/joukou/skydns-announce
 
@@ -41,11 +44,10 @@ ExecStartPre=-/usr/bin/docker rm %p
 
 ExecStart=/opt/bin/systemd-docker run --name %p \
 -e "SKYDNS_CONTAINER=riak" \
--e "SKYDNS_ENVIRONMENT=production" \
 -e "SKYDNS_INSTANCE=%i" \
--e "SKYDNS_ZONE=akl" \
 -e "SKYDNS_PORT=8098" \
 -v /var/run/docker.sock:/var/run/docker.sock \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 quay.io/joukou/skydns-announce
 
 ExecStop=/usr/bin/docker kill %p
