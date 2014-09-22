@@ -37,6 +37,7 @@ Restart=on-failure
 RestartSec=10s
 
 EnvironmentFile=/run/docker.env
+EnvironmentFile=/etc/skydns.env
 
 ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
 ExecStartPre=/usr/bin/docker pull quay.io/joukou/elasticsearch
@@ -47,7 +48,7 @@ ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/opt/bin/systemd-docker run --name %p \
 -v /var/lib/elasticsearch:/var/lib/elasticsearch \
 -v /var/log/elasticsearch:/var/log/elasticsearch \
--h %p.%H \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 quay.io/joukou/elasticsearch
 
 ExecStop=/usr/bin/docker kill %p
