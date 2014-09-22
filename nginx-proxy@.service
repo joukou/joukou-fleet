@@ -1,0 +1,58 @@
+[Unit]
+Description=NGINX reverse proxy
+Documentation=http://wiki.nginx.org/Main
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+# Run as root because
+# - systemd-docker requires root privileges
+# - /root/.dockercfg for registry authentication
+User=root
+Type=notify
+
+# sd_notify(3) is required by systemd-docker
+NotifyAccess=all
+
+# Large start timeout is to allow for pulling down Docker images from quay.io
+TimeoutStartSec=12min
+TimeoutStopSec=15
+
+# On failures try to restart every 10 seconds rate limiting to 5 attempts every 10 minutes
+Restart=on-failure
+RestartSec=10s
+
+EnvironmentFile=/run/docker.env
+EnvironmentFile=/etc/skydns.env
+
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
+ExecStartPre=/usr/bin/docker pull quay.io/joukou/nginx-proxy
+
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+
+ExecStart=/opt/bin/systemd-docker run --name %p \
+-e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001" \
+-v /etc/nginx/joukou.com.htpasswd:/etc/nginx/joukou.com.htpasswd:ro \
+-v /etc/ssl/certs:/etc/ssl/certs:ro \
+-v /etc/ssl/private:/etc/ssl/private:ro \
+-p 80:8080 \
+-p 443:8443 \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+quay.io/joukou/nginx-proxy
+
+ExecStop=/usr/bin/docker kill %p
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+X-ConditionMachineOf=api@%i.service
+X-ConditionMachineOf=cadvisor@%i.service
+X-ConditionMachineOf=control@%i.service
+X-ConditionMachineOf=elasticsearch@%i.service
+X-ConditionMachineOf=rabbitmq@%i.service
+X-ConditionMachineOf=riak@%i.service
+X-Conflicts=nginx-proxy@*.service
