@@ -56,5 +56,5 @@ ExecStop=/usr/bin/docker kill %p
 WantedBy=multi-user.target
 
 [X-Fleet]
-X-ConditionMachineOf=riak@%i.service
-X-Conflicts=riak-announce@*.service
+MachineOf=riak@%i.service
+Conflicts=riak-announce@*.service

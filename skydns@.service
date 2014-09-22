@@ -58,4 +58,4 @@ ExecStop=/usr/bin/docker kill %p
 WantedBy=multi-user.target
 
 [X-Fleet]
-X-Conflicts=skydns@*.service
+Conflicts=skydns@*.service

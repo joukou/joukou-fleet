@@ -64,5 +64,5 @@ ExecStop=/usr/bin/docker kill %p
 WantedBy=multi-user.target
 
 [X-Fleet]
-X-ConditionMachineOf=influxdb@%i.service
-X-Conflicts=cadvisor@*.service
+MachineOf=influxdb@%i.service
+Conflicts=cadvisor@*.service

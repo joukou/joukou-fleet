@@ -58,5 +58,5 @@ ExecStop=/usr/bin/docker kill %p
 WantedBy=multi-user.target
 
 [X-Fleet]
-X-ConditionMachineOf=skydns@%i.service
-X-Conflicts=influxdb@*.service
+MachineOf=skydns@%i.service
+Conflicts=influxdb@*.service

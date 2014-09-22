@@ -57,5 +57,5 @@ ExecStop=/usr/bin/docker kill %p
 WantedBy=multi-user.target
 
 [X-Fleet]
-X-ConditionMachineOf=skydns@%i.service
-X-Conflicts=elasticsearch@*.service
+MachineOf=skydns@%i.service
+Conflicts=elasticsearch@*.service

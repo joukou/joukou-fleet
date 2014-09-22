@@ -62,7 +62,7 @@ ExecStop=/usr/bin/docker kill %p
 WantedBy=multi-user.target
 
 [X-Fleet]
-X-ConditionMachineOf=elasticsearch@%i.service
-X-ConditionMachineOf=rabbitmq@%i.service
-X-ConditionMachineOf=riak@%i.service
-X-Conflicts=api@*.service
+MachineOf=elasticsearch@%i.service
+MachineOf=rabbitmq@%i.service
+MachineOf=riak@%i.service
+Conflicts=api@*.service
