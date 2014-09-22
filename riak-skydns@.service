@@ -1,0 +1,58 @@
+# Copyright 2014 Joukou Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+[Unit]
+Description=Basho Riak distributed key/value store service announcement
+Documentation=http://docs.basho.com/riak/2.0.0/
+BindsTo=riak@%i.service
+
+[Service]
+# Run as root because
+# - systemd-docker requires root privileges
+# - /root/.dockercfg for registry authentication
+User=root
+
+# sd_notify(3) is required by systemd-docker
+Type=notify
+NotifyAccess=all
+
+# Large start timeout is to allow for pulling down Docker images from quay.io
+TimeoutStartSec=12min
+TimeoutStopSec=15
+
+Restart=on-failure
+RestartSec=10s
+
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
+ExecStartPre=/usr/bin/docker pull quay.io/joukou/skydns-announce
+
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+
+ExecStart=/opt/bin/systemd-docker run --name %p \
+-e "SKYDNS_CONTAINER=riak" \
+-e "SKYDNS_ENVIRONMENT=production" \
+-e "SKYDNS_INSTANCE=%i" \
+-e "SKYDNS_ZONE=akl" \
+-e "SKYDNS_PORT=8098" \
+-v /var/run/docker.sock:/var/run/docker.sock \
+quay.io/joukou/skydns-announce
+
+ExecStop=/usr/bin/docker kill %p
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+X-ConditionMachineOf=riak@%i.service
+X-Conflicts=riak-announce@*.service
