@@ -1,0 +1,46 @@
+[Unit]
+Description=Joukou Control
+Documentation=https://github.com/joukou/joukou-control
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+# Run as root because
+# - systemd-docker requires root privileges
+# - /root/.dockercfg for registry authentication
+User=root
+
+# sd_notify(3) is required by systemd-docker
+Type=notify
+NotifyAccess=all
+
+# Large start timeout is to allow for pulling down Docker images from quay.io
+TimeoutStartSec=12min
+TimeoutStopSec=15
+
+Restart=on-failure
+RestartSec=10s
+
+EnvironmentFile=/run/docker.env
+EnvironmentFile=/etc/skydns.env
+
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
+ExecStartPre=/usr/bin/docker pull quay.io/joukou/control
+
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+
+ExecStart=/opt/bin/systemd-docker run --name %p \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+quay.io/joukou/control
+
+ExecStop=/usr/bin/docker kill %p
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+X-ConditionMachineOf=skydns@%i.service
+X-Conflicts=control@*.service
