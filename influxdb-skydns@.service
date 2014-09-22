@@ -61,4 +61,4 @@ WantedBy=multi-user.target
 [X-Fleet]
 X-ConditionMachineOf=skydns@%i.service
 X-ConditionMachineOf=influxdb@%i.service
-X-Conflicts=influxdb-announce@*.service
+X-Conflicts=influxdb-skydns@*.service
