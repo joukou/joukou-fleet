@@ -48,7 +48,7 @@ ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/opt/bin/systemd-docker run --name %p \
 -e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001" \
 -e "INFLUXDB_CREATE_DB=cadvisor" \
--h %i.%p.production.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 quay.io/joukou/influxdb
 
 ExecStop=/usr/bin/docker kill %p
