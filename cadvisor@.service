@@ -37,13 +37,13 @@ Restart=on-failure
 RestartSec=10s
 
 EnvironmentFile=/run/docker.env
-EnvironmentFile=/run/skydns.env
-
-ExecStartPre=-/usr/bin/docker kill %p
-ExecStartPre=-/usr/bin/docker rm %p
+EnvironmentFile=/etc/skydns.env
 
 ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
 ExecStartPre=/usr/bin/docker pull google/cadvisor:canary
+
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
 
 ExecStart=/opt/bin/systemd-docker run --name %p \
 --volume=/var/run:/var/run:rw \
