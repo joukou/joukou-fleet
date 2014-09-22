@@ -1,6 +1,6 @@
 Joukou Fleet Units
 ==================
-[![Apache 2.0](http://img.shields.io/badge/License-apache%202.0-brightgreen.svg)](#license) [![Stories in Ready](https://badge.waffle.io/joukou/joukou-fleet.png?label=ready&title=Ready)](http://waffle.io/joukou/joukou-fleet) [![IRC](http://img.shields.io/badge/IRC-%23joukou-blue.svg)](irc://irc.freenode.org:6667/#joukou)
+[![Apache 2.0](http://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](#license) [![Stories in Ready](https://badge.waffle.io/joukou/joukou-fleet.png?label=ready&title=Ready)](http://waffle.io/joukou/joukou-fleet) [![IRC](http://img.shields.io/badge/IRC-%23joukou-blue.svg)](irc://irc.freenode.org:6667/#joukou)
 
 ![](http://media.giphy.com/media/123EKEzenhM2dy/giphy.gif)
 
