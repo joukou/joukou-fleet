@@ -1,0 +1,62 @@
+# Copyright 2009-2014 Joukou Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+[Unit]
+Description=ElasticSearch
+Documentation=http://www.elasticsearch.org/guide/
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+# Run as root because
+# - systemd-docker requires root privileges
+# - /root/.dockercfg for registry authentication
+User=root
+
+# sd_notify(3) is required by systemd-docker
+Type=notify
+NotifyAccess=all
+
+# Large start timeout is to allow for pulling down Docker images from quay.io
+TimeoutStartSec=12min
+TimeoutStopSec=15
+
+Restart=on-failure
+RestartSec=10s
+StartLimitInterval=600
+StartLimitBurst=5
+
+EnvironmentFile=/run/docker.env
+
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
+ExecStartPre=/usr/bin/docker pull quay.io/joukou/elasticsearch
+
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+
+ExecStart=/opt/bin/systemd-docker run --name %p \
+-v /var/lib/elasticsearch:/var/lib/elasticsearch \
+-v /var/log/elasticsearch:/var/log/elasticsearch \
+-h %p.%H \
+quay.io/joukou/elasticsearch
+
+ExecStop=/usr/bin/docker kill %p
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+X-ConditionMachineOf=skydns@%i.service
+X-Conflicts=elasticsearch@*.service
