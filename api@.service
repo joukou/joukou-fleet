@@ -1,0 +1,55 @@
+[Unit]
+Description=Joukou API
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+After=elasticsearch@%i.service
+Requires=elasticsearch@%i.service
+After=rabbitmq@%i.service
+Requires=rabbitmq@%i.service
+After=riak@%i.service
+Requires=riak@%i.service
+
+[Service]
+# Run as root because
+# - systemd-docker requires root privileges
+# - /root/.dockercfg for registry authentication
+User=root
+
+# sd_notify(3) is required by systemd-docker
+Type=notify
+NotifyAccess=all
+
+# Large start timeout is to allow for pulling down Docker images from quay.io
+TimeoutStartSec=12min
+TimeoutStopSec=15
+
+Restart=on-failure
+RestartSec=10s
+
+EnvironmentFile=/run/docker.env
+EnvironmentFile=/run/skydns.env
+
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
+ExecStartPre=/usr/bin/docker pull quay.io/joukou/api
+
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+
+ExecStart=/opt/bin/systemd-docker run --name %p \
+-e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001" \
+-e "PORT=2201" \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+quay.io/joukou/api
+
+ExecStop=/usr/bin/docker kill %p
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+X-ConditionMachineOf=elasticsearch@%i.service
+X-ConditionMachineOf=rabbitmq@%i.service
+X-ConditionMachineOf=riak@%i.service
+X-Conflicts=api@*.service
