@@ -24,19 +24,20 @@ Requires=etcd.service
 # - systemd-docker requires root privileges
 # - /root/.dockercfg for registry authentication
 User=root
+
 # sd_notify(3) is required by systemd-docker
 Type=notify
 NotifyAccess=all
+
 # Large start timeout is to allow for pulling down Docker images from quay.io
 TimeoutStartSec=12min
 TimeoutStopSec=15
-# On failures try to restart every 10 seconds rate limiting to 5 attempts every 10 minutes
+
 Restart=on-failure
 RestartSec=10s
-StartLimitInterval=600
-StartLimitBurst=5
 
 EnvironmentFile=/run/docker.env
+EnvironmentFile=/etc/skydns.env
 
 ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
 ExecStartPre=/usr/bin/docker pull quay.io/joukou/skydns
@@ -46,9 +47,8 @@ ExecStartPre=-/usr/bin/docker rm %p
 
 ExecStart=/opt/bin/systemd-docker run --name %p \
 -e "ETCD_MACHINES=http://${DOCKER_BRIDGE_IPV4}:4001" \
--e "SKYDNS_DOMAIN=joukou.local" \
 -e "SKYDNS_NAMESERVERS=8.8.8.8:53,8.8.4.4:53" \
--h %p.%H \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 -p ${DOCKER_BRIDGE_IPV4}:53:53/udp \
 quay.io/joukou/skydns
 
