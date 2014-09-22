@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 [Unit]
-Description=InfluxDB SkyDNS annoucement
+Description=InfluxDB SkyDNS Service Announcement
 Documentation=http://influxdb.com/
+Requires=skydns@%i.service
+After=skydns@%i.service
 BindsTo=influxdb@%i.service
 
 [Service]
@@ -43,6 +45,7 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 
 ExecStart=/opt/bin/systemd-docker run --name %p \
+-e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001 \
 -e "SKYDNS_CONTAINER=influxdb" \
 -e "SKYDNS_INSTANCE=%i" \
 -e "SKYDNS_PORT=8086" \
@@ -56,5 +59,6 @@ ExecStop=/usr/bin/docker kill %p
 WantedBy=multi-user.target
 
 [X-Fleet]
+X-ConditionMachineOf=skydns@%i.service
 X-ConditionMachineOf=influxdb@%i.service
 X-Conflicts=influxdb-announce@*.service
