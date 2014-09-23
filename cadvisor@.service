@@ -53,7 +53,7 @@ ExecStart=/opt/bin/systemd-docker run --name %p \
 google/cadvisor:canary \
 -storage_driver=influxdb \
 -storage_driver_host=%i.influxdb.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN}:8086 \
--storage_driver_name=cadvisor \
+-storage_driver_db=cadvisor \
 -storage_driver_user=root \
 -storage_driver_password=root \
 -storage_driver_secure=false
