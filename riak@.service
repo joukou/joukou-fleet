@@ -50,7 +50,7 @@ ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/opt/bin/systemd-docker run --name %p \
 -v /var/lib/riak:/var/lib/riak \
 -v /var/log/riak:/var/log/riak \
--h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-e "HOSTNAME=%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN}" \
 quay.io/joukou/riak
 
 ExecStop=/usr/bin/docker kill %p
