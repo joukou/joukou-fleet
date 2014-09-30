@@ -46,10 +46,10 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 
 ExecStart=/opt/bin/systemd-docker run --name %p \
+-h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 -e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001" \
 -v /var/lib/rabbitmq:/var/lib/rabbitmq \
 -v /var/log/rabbitmq:/var/log/rabbitmq \
--h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 quay.io/joukou/rabbitmq
 
 ExecStop=/usr/bin/docker kill %p
