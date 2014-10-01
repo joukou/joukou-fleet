@@ -46,7 +46,7 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 
 ExecStart=/opt/bin/systemd-docker run --name %p \
--h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-h i%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 quay.io/joukou/control
 
 ExecStop=/usr/bin/docker kill %p

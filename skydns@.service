@@ -49,7 +49,7 @@ ExecStart=/opt/bin/systemd-docker run --name %p \
 -e "ETCD_MACHINES=http://${DOCKER_BRIDGE_IPV4}:4001" \
 -e "SKYDNS_NAMESERVERS=8.8.8.8:53,8.8.4.4:53" \
 -e "SKYDNS_DOMAIN=${SKYDNS_DOMAIN}" \
--h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-h i%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 -p ${DOCKER_BRIDGE_IPV4}:53:53/udp \
 quay.io/joukou/skydns
 

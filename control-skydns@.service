@@ -47,13 +47,13 @@ ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/opt/bin/systemd-docker run --name %p \
 -e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001" \
 -e "SKYDNS_PORT=8080" \
--e "SKYDNS_INSTANCE=%i" \
+-e "SKYDNS_INSTANCE=i%i" \
 -e "SKYDNS_CONTAINER=control" \
 -e "SKYDNS_ENVIRONMENT=${SKYDNS_ENVIRONMENT}" \
 -e "SKYDNS_ZONE=${SKYDNS_ZONE}" \
 -e "SKYDNS_DOMAIN_PATH=${SKYDNS_DOMAIN_PATH}" \
 -v /var/run/docker.sock:/var/run/docker.sock \
--h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-h i%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 quay.io/joukou/skydns-announce
 
 ExecStop=/usr/bin/docker kill %p

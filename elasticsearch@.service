@@ -48,7 +48,8 @@ ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/opt/bin/systemd-docker run --name %p \
 -v /var/lib/elasticsearch:/var/lib/elasticsearch \
 -v /var/log/elasticsearch:/var/log/elasticsearch \
--h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-h i%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-e "ES_CLUSTER_NAME=%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN}" \
 quay.io/joukou/elasticsearch
 
 ExecStop=/usr/bin/docker kill %p

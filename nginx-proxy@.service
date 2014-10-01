@@ -53,7 +53,7 @@ ExecStart=/opt/bin/systemd-docker run --name %p \
 -v /etc/ssl/private:/etc/ssl/private:ro \
 -p 80:8080 \
 -p 443:8443 \
--h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-h i%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 quay.io/joukou/nginx-proxy
 
 ExecStop=/usr/bin/docker kill %p

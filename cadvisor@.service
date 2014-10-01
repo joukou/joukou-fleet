@@ -49,10 +49,10 @@ ExecStart=/opt/bin/systemd-docker run --name %p \
 --volume=/var/run:/var/run:rw \
 --volume=/sys:/sys:ro \
 --volume=/var/lib/docker/:/var/lib/docker:ro \
--h %i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+-h i%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 google/cadvisor:canary \
 -storage_driver=influxdb \
--storage_driver_host=%i.influxdb.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN}:8086 \
+-storage_driver_host=i%i.influxdb.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN}:8086 \
 -storage_driver_db=cadvisor \
 -storage_driver_user=root \
 -storage_driver_password=root \

@@ -43,9 +43,9 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 
 ExecStart=/opt/bin/systemd-docker run --name %p \
--e "HOSTNAME=%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN}" \
+-h i%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
 -e "SKYDNS_CONTAINER=riak" \
--e "SKYDNS_INSTANCE=%i" \
+-e "SKYDNS_INSTANCE=i%i" \
 -e "SKYDNS_PORT=8098" \
 -v /var/run/docker.sock:/var/run/docker.sock \
 quay.io/joukou/skydns-announce
