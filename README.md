@@ -40,5 +40,3 @@ Copyright &copy; 2014 Joukou Ltd.
 
 Joukou Fleet Units is under the Apache 2.0 license. See the
 [LICENSE](LICENSE) file for details.
-
-[![Analytics](https://ga-beacon.appspot.com/UA-41911221-2/joukou-fleet/readme)](https://github.com/igrigorik/ga-beacon)
