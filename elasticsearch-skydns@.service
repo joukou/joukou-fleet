@@ -1,0 +1,67 @@
+# Copyright 2014 Joukou Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+[Unit]
+Description=ElasticSearch SkyDNS Service Announcement
+Documentation=http://www.elasticsearch.org/guide/
+Requires=skydns@%i.service
+After=skydns@%i.service
+BindsTo=elasticsearch@%i.service
+
+[Service]
+# Run as root because
+# - systemd-docker requires root privileges
+# - /root/.dockercfg for registry authentication
+User=root
+
+# sd_notify(3) is required by systemd-docker
+Type=notify
+NotifyAccess=all
+
+# Large start timeout is to allow for pulling down Docker images from quay.io
+TimeoutStartSec=12min
+TimeoutStopSec=15
+
+Restart=on-failure
+RestartSec=10s
+
+EnvironmentFile=/run/docker.env
+EnvironmentFile=/etc/skydns.env
+
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
+ExecStartPre=/usr/bin/docker pull quay.io/joukou/skydns-announce
+
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+
+ExecStart=/opt/bin/systemd-docker run --name %p \
+-e "ETCD_ADDR=http://${DOCKER_BRIDGE_IPV4}:4001" \
+-e "SKYDNS_PORT=8086" \
+-e "SKYDNS_INSTANCE=i%i" \
+-e "SKYDNS_CONTAINER=elasticsearch" \
+-e "SKYDNS_ENVIRONMENT=${SKYDNS_ENVIRONMENT}" \
+-e "SKYDNS_ZONE=${SKYDNS_ZONE}" \
+-e "SKYDNS_DOMAIN_PATH=${SKYDNS_DOMAIN_PATH}" \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-h i%i.%p.${SKYDNS_ENVIRONMENT}.${SKYDNS_ZONE}.${SKYDNS_DOMAIN} \
+quay.io/joukou/skydns-announce
+
+ExecStop=/usr/bin/docker kill %p
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+MachineOf=skydns@%i.service
+MachineOf=elasticsearch@%i.service
+Conflicts=elasticsearch-skydns@*.service
