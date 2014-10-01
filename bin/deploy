@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Joukou Fleet deployment.
+#
+# Author: Isaac Johnston <isaac.johnston@joukou.com>
+# Copyright (c) 2014 Joukou Ltd. All rights reserved.
+
+services=( skydns influxdb influxdb-skydns cadvisor cadvisor-skydns control control-skydns elasticsearch elasticsearch-skydns rabbitmq rabbitmq-skydns riak riak-skydns api api-skydns nginx-proxy )
+
+for service in "${services[@]}"; do
+  printf "Submitting $service@.service...\n"
+  fleetctl submit $service@.service
+done
+
+for service in "${services[@]}"; do
+  for ((i=1;i<=$1;i++)); do
+    printf "Starting $service@$i.service\n"
+    fleetctl start $service@$i.service
+  done
+  sleep 5
+done

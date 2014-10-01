@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Joukou Fleet self-destruct.
+#
+# Author: Isaac Johnston <isaac.johnston@joukou.com>
+# Copyright (c) 2014 Joukou Ltd. All rights reserved.
+
+services=( skydns influxdb influxdb-skydns cadvisor cadvisor-skydns control control-skydns elasticsearch elasticsearch-skydns rabbitmq rabbitmq-skydns riak riak-skydns api api-skydns nginx-proxy )
+
+for service in "${services[@]}"; do
+  fleetctl destroy $service@.service
+  for ((i=1;i<=$1;i++)); do
+    fleetctl destroy $service@$i.service
+  done
+done
