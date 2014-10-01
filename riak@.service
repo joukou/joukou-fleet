@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 [Unit]
-Description=Basho Riak distributed key/value store
+Description=Basho Riak
 Documentation=http://docs.basho.com/riak/2.0.0/
 After=docker.service
 Requires=docker.service

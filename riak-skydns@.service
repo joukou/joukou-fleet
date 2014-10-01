@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 [Unit]
-Description=Basho Riak distributed key/value store service announcement
+Description=Basho Riak SkyDNS Service Announcement
 Documentation=http://docs.basho.com/riak/2.0.0/
 BindsTo=riak@%i.service
 
